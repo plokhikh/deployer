@@ -1,12 +1,10 @@
-import urllib
 import requests
 import json
 from lxml import objectify
 
 token = ''
 
-body = urllib.urlopen(
-    "https://mbt.tpondemand.com/api/v1/UserStories/22665?token=").read()
+body = requests.get("https://mbt.tpondemand.com/api/v1/UserStories/22665?token=")
 
 userStory = objectify.fromstring(body)
 
