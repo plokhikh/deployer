@@ -13,11 +13,17 @@ userStoriesIds = []
 wishState = 'Verify on Int'
 tp = TargetProcessClient(token)
 
-response = tp.get('UserStories', {'id': userStoriesIds}).text
-userStories = json.loads(response)
+response = tp.get('UserStories', {'id': userStoriesIds})
+
+if response.status_code != 200:
+    print colors.error("Cant get user stories")
+    exit()
+
+userStories = json.loads(response.text)
 
 if 'Items' not in userStories:
-    print colors.error('Cant get user stories')
+    print colors.error('Bad response')
+    exit()
 
 for userStory in userStories['Items']:
     result = tp.post('UserStories', {
