@@ -1,17 +1,35 @@
-import requests
 import json
-from lxml import objectify
+import colors
+import os
+from client import TargetProcessClient
 
-token = ''
+token = os.environ.get('TARGET_PROCESS_TOKEN')
 
-body = requests.get("https://mbt.tpondemand.com/api/v1/UserStories/22665?token=")
+if token is None:
+    print colors.error("Environment variable 'TARGET_PROCESS_TOKEN' missing")
+    exit()
 
-userStory = objectify.fromstring(body)
+userStoriesIds = []
+wishState = 'Verify on Int'
+tp = TargetProcessClient(token)
 
-result = requests.post(
-    "https://mbt.tpondemand.com/api/v1/UserStories?token=",
-    data=json.dumps({'Id': userStory.attrib['Id'], 'EntityState': {'Id':246}}),
-    headers={"Content-type": "application/json"}
-)
+response = tp.get('UserStories', {'id': userStoriesIds}).text
+userStories = json.loads(response)
 
-print(result.status_code, result.reason)
+if 'Items' not in userStories:
+    print colors.error('Cant get user stories')
+
+for userStory in userStories['Items']:
+    result = tp.post('UserStories', {
+        'Id': userStory['Id'],
+        'EntityState': {'Id': tp.getStateCode(wishState)}
+    })
+
+    if result.status_code == 200:
+        print colors.success("User story {} moved \"{}\" -> \"{}\" success".format(
+            userStory['Id'],
+            userStory['EntityState']['Name'],
+            wishState
+        ))
+    else:
+        print colors.error("User story {} update failed".format(id))
