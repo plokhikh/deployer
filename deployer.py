@@ -9,7 +9,7 @@ if token is None:
     print colors.error("Environment variable 'TARGET_PROCESS_TOKEN' missing")
     exit()
 
-userStoriesIds = []
+userStoriesIds = [22665]
 wishState = 'Verify on Int'
 tp = TargetProcessClient(token)
 
@@ -32,7 +32,7 @@ for userStory in userStories['Items']:
     })
 
     if result.status_code == 200:
-        print colors.success("User story {} moved \"{}\" -> \"{}\" success".format(
+        print colors.success("User story {} \"{}\" -> \"{}\"".format(
             userStory['Id'],
             userStory['EntityState']['Name'],
             wishState
