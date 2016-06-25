@@ -14,7 +14,7 @@ class TargetProcessConnector:
         else:
             self.tp = TargetProcessClient(self.token)
 
-    def moveUserStories(self, userStoriesIds, toState):
+    def move_user_stories(self, userStoriesIds, toState):
         if not isinstance(userStoriesIds, list):
             print colors.error("User stories should be list instance")
             exit()
