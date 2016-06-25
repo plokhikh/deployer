@@ -37,7 +37,8 @@ class TargetProcess:
 
     def move_user_stories(self, to_state):
         self.check_user_stories()
-        result = []
+        succeed = []
+        failed = []
         for userStory in self.user_stories['Items']:
             response = self.tp.post('UserStories', {
                 'Id': userStory['Id'],
@@ -45,23 +46,25 @@ class TargetProcess:
             })
 
             if response.status_code == 200:
-                result.append(colors.success("User story {} \"{}\" -> \"{}\" success".format(
+                succeed.append(colors.success("User story {} \"{}\" -> \"{}\" success".format(
                     userStory['Id'],
                     userStory['EntityState']['Name'],
                     to_state
                 )))
             else:
-                result.append(colors.error("User story {} \"{}\" -> \"{}\" failed".format(
+                failed.append(colors.error("User story {} \"{}\" -> \"{}\" failed".format(
                     userStory['Id'],
                     userStory['EntityState']['Name'],
                     to_state
                 )))
 
-        return "\n".join(result)
+        return succeed, failed
 
     def add_tag(self, tag):
         self.check_user_stories()
-        result = []
+        succeed = []
+        failed = []
+        
         for user_story in self.user_stories['Items']:
             response = self.tp.post('UserStories', {
                 'Id': user_story['Id'],
@@ -69,7 +72,8 @@ class TargetProcess:
             })
 
             if response.status_code == 200:
-                result.append(colors.success("User story %d add tag '%s' success" % (user_story['Id'], tag)))
+                succeed.append(colors.success("User story %d add tag '%s' success" % (user_story['Id'], tag)))
             else:
-                result.append(colors.error("User story %d add tag '%s' failed" % (user_story['Id'], tag)))
-        return result
+                failed.append(colors.error("User story %d add tag '%s' failed" % (user_story['Id'], tag)))
+
+        return succeed, failed
