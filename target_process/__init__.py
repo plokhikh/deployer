@@ -37,35 +37,39 @@ class TargetProcess:
 
     def move_user_stories(self, to_state):
         self.check_user_stories()
+        result = []
         for userStory in self.user_stories['Items']:
-            result = self.tp.post('UserStories', {
+            response = self.tp.post('UserStories', {
                 'Id': userStory['Id'],
                 'EntityState': {'Id': self.tp.getStateCode(to_state)}
             })
 
-            if result.status_code == 200:
-                print colors.success("User story {} \"{}\" -> \"{}\" success".format(
+            if response.status_code == 200:
+                result.append(colors.success("User story {} \"{}\" -> \"{}\" success".format(
                     userStory['Id'],
                     userStory['EntityState']['Name'],
                     to_state
-                ))
+                )))
             else:
-                print colors.error("User story {} \"{}\" -> \"{}\" failed".format(
+                result.append(colors.error("User story {} \"{}\" -> \"{}\" failed".format(
                     userStory['Id'],
                     userStory['EntityState']['Name'],
                     to_state
-                ))
+                )))
+
+        return "\n".join(result)
 
     def add_tag(self, tag):
         self.check_user_stories()
+        result = []
         for user_story in self.user_stories['Items']:
-            result = self.tp.post('UserStories', {
+            response = self.tp.post('UserStories', {
                 'Id': user_story['Id'],
                 'Tag': user_story['Tag'] + ', ' + tag
             })
 
-            if result.status_code == 200:
-                print colors.success("User story %d add tag '%s' success" % (user_story['Id'], tag))
+            if response.status_code == 200:
+                result.append(colors.success("User story %d add tag '%s' success" % (user_story['Id'], tag)))
             else:
-                print colors.error("User story %d add tag '%s' failed" % (user_story['Id'], tag))
-
+                result.append(colors.error("User story %d add tag '%s' failed" % (user_story['Id'], tag)))
+        return result
