@@ -65,7 +65,7 @@ class TargetProcess:
         for user_story in self.user_stories['Items']:
             response = self.tp.post('UserStories', {
                 'Id': user_story['Id'],
-                'Tag': user_story['Tag'] + ', ' + tag
+                'Tags': user_story['Tags'] + ', ' + tag
             })
 
             if response.status_code == 200:
