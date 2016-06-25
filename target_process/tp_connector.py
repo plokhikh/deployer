@@ -1,10 +1,9 @@
 import json
-import colors
 import os
+import colors
 from client import TargetProcessClient
 
-
-class TargetProcessConnector:
+class TargetProcess:
     def __init__(self):
         self.token = os.environ.get('TARGET_PROCESS_TOKEN')
 
