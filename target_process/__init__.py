@@ -6,6 +6,7 @@ from client import TargetProcessClient
 class TargetProcess:
     def __init__(self, token):
         self.token = token
+        self.user_stories = {}
 
         if self.token is None:
             print colors.error("Token cant be empty")
@@ -13,35 +14,58 @@ class TargetProcess:
         else:
             self.tp = TargetProcessClient(self.token)
 
-    def move_user_stories(self, userStoriesIds, toState):
-        if not isinstance(userStoriesIds, list):
+    def set_user_stories_ids(self, user_stories_ids):
+        if not isinstance(user_stories_ids, list):
             print colors.error("User stories should be list instance")
             exit()
 
-        response = self.tp.get('UserStories', {'id': userStoriesIds})
+        response = self.tp.get('UserStories', {'id': user_stories_ids})
 
         if response.status_code != 200:
             print colors.error("Cant get user stories")
             exit()
 
-        userStories = json.loads(response.text)
+        self.user_stories = json.loads(response.text)
 
-        if 'Items' not in userStories:
+        if 'Items' not in self.user_stories:
             print colors.error('Bad response')
             exit()
 
-        for userStory in userStories['Items']:
+    def check_user_stories(self):
+        if self.user_stories == {}:
+            raise ValueError('User stories must be set')
+
+    def move_user_stories(self, to_state):
+        self.check_user_stories()
+        for userStory in self.user_stories['Items']:
             result = self.tp.post('UserStories', {
                 'Id': userStory['Id'],
-                'EntityState': {'Id': self.tp.getStateCode(toState)}
+                'EntityState': {'Id': self.tp.getStateCode(to_state)}
             })
 
             if result.status_code == 200:
-                print colors.success("User story {} \"{}\" -> \"{}\"".format(
+                print colors.success("User story {} \"{}\" -> \"{}\" success".format(
                     userStory['Id'],
                     userStory['EntityState']['Name'],
-                    toState
+                    to_state
                 ))
             else:
-                print colors.error("User story {} update failed".format(id))
+                print colors.error("User story {} \"{}\" -> \"{}\" failed".format(
+                    userStory['Id'],
+                    userStory['EntityState']['Name'],
+                    to_state
+                ))
+
+    def add_tag(self, tag):
+        self.check_user_stories()
+        for user_story in self.user_stories['Items']:
+            result = self.tp.post('UserStories', {
+                'Id': user_story['Id'],
+                'Tag': user_story['Tag'] + ', ' + tag
+            })
+
+            if result.status_code == 200:
+                print colors.success("User story %d add tag '%s' success" % (user_story['Id'], tag))
+            else:
+                print colors.error("User story %d add tag '%s' failed" % (user_story['Id'], tag))
 
