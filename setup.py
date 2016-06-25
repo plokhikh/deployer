@@ -5,4 +5,4 @@ setup(name='TargetProcessClient',
       author_email='sergey.plokhikh@iqoption.com',
       license='MIT',
       description='This package allow get user stories and move it on board',
-      py_modules=['tp_connector'])
+      py_modules=['tp_connector', 'colors', 'client'])
