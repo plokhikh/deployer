@@ -1,5 +1,5 @@
 from setuptools import setup
-setup(name='Target Process python client',
+setup(name='TargetProcessClient',
       version='0.1',
       author='Sergey Plokhikh',
       author_email='sergey.plokhikh@iqoption.com',
