@@ -64,7 +64,7 @@ class TargetProcess:
         self.check_user_stories()
         succeed = []
         failed = []
-        
+
         for user_story in self.user_stories['Items']:
             response = self.tp.post('UserStories', {
                 'Id': user_story['Id'],

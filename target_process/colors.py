@@ -13,15 +13,18 @@ COLOR_MAP = {
 
 
 def colored(text, color):
-    if color in COLOR_MAP:
-        return COLOR_MAP[color] + str(text) + ENDC
-    else:
-        raise ValueError('Color not found')
+    return text
+    # if color in COLOR_MAP:
+    #     return COLOR_MAP[color] + str(text) + ENDC
+    # else:
+    #     raise ValueError('Color not found')
 
 
 def error(text):
-    return colored(text, 'red')
+    return text
+    # return colored(text, 'red')
 
 
 def success(text):
-    return colored(text, 'green')
+    # return colored(text, 'green')
+    return text
