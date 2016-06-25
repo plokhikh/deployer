@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 with open('README.rst') as f:
     readme = f.read()
 setup(name='TargetProcessClient',
@@ -8,4 +8,4 @@ setup(name='TargetProcessClient',
       license='MIT',
       description='This package allow get user stories and move it on board',
       long_description=readme,
-      packages=find_packages())
+      packages=["target_process"])
