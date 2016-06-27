@@ -35,26 +35,47 @@ class TargetProcess:
         if self.user_stories == {}:
             raise ValueError('User stories must be set')
 
+    def change_state_add_tag(self, to_state, tag):
+        self.check_user_stories()
+        succeed = []
+        failed = []
+        for user_story in self.user_stories['Items']:
+            response = self.tp.post('UserStories', {
+                'Id': user_story['Id'],
+                'EntityState': {'Id': self.tp.getStateCode(to_state)},
+                'Tags': user_story['Tags'] + ', ' + tag
+            })
+
+            if response.status_code == 200:
+                succeed.append(
+                    "User story %d \"%s\" -> \"%s\" add tag %s" %
+                    (user_story['Id'], user_story['EntityState']['Name'], to_state, tag)
+                )
+            else:
+                failed.append("User story %d udpate failed" % user_story['Id'])
+
+        return succeed, failed
+
     def move_user_stories(self, to_state):
         self.check_user_stories()
         succeed = []
         failed = []
-        for userStory in self.user_stories['Items']:
+        for user_story in self.user_stories['Items']:
             response = self.tp.post('UserStories', {
-                'Id': userStory['Id'],
+                'Id': user_story['Id'],
                 'EntityState': {'Id': self.tp.getStateCode(to_state)}
             })
 
             if response.status_code == 200:
                 succeed.append(colors.success("User story {} \"{}\" -> \"{}\" success".format(
-                    userStory['Id'],
-                    userStory['EntityState']['Name'],
+                    user_story['Id'],
+                    user_story['EntityState']['Name'],
                     to_state
                 )))
             else:
                 failed.append(colors.error("User story {} \"{}\" -> \"{}\" failed".format(
-                    userStory['Id'],
-                    userStory['EntityState']['Name'],
+                    user_story['Id'],
+                    user_story['EntityState']['Name'],
                     to_state
                 )))
 
